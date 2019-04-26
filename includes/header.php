@@ -1,6 +1,19 @@
 <?php
-session_start();
+	session_start();
 
+	try {
+		$db=new PDO("msqli:host=$serveur;dbname=site-de-vente-de-livres",$login,$pass);
+		$db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
+		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+
+				
+	
+	
+	} catch (Exception $e) {
+		echo"une erreur est survenu";
+
+	
+	}
 ?>
 
 <!DOCTYPE html>
