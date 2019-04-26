@@ -13,7 +13,7 @@ $insert=$db->prepare("INSERT INTO articles VALUES('$reference','$titre','$auteur
 	
 	
 } catch (Exception $e) {
-	echo"une eurreur est survenu";
+	echo"une erreur est survenu";
 
 	
 }
