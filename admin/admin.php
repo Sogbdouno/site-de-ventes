@@ -4,7 +4,7 @@
 	$pass='root';
 
 	try {
-		$db=new PDO("msql:host=$serveur;dbname=site-de-vente-de-livres",$login,$pass);
+		$db=new PDO("mysql:host=$serveur;dbname=site-de-vente-de-livres",$login,$pass);
 		$db->setAttribute(PDO::ATTR_CASE,PDO::CASE_LOWER);
 		$db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
 
@@ -40,9 +40,10 @@ session_start();
 			$titre=$_POST['titre'];
 			$auteur=$_POST['auteur'];
 			$description=$_POST['description'];
+			$rubriqueID=$_POST['rubriqueID'];
 			$prix=$_POST['prix'];
 		if ($reference&&$titre&&$auteur&&$description&&$prix) {
-		    $insert=$db->prepare("INSERT INTO articles VALUES('$reference','$titre','$auteur','$description')");
+		    $insert=$db->prepare("INSERT INTO articles VALUES('$reference','$titre','$auteur','$description','$rubriqueID','$prix','')");
 			$insert->execute();
 				
 			
@@ -57,8 +58,10 @@ session_start();
 		<h3>Reference de l'article:</h3><input type="text" name="reference">
 		<h3>Titre de l'article:</h3><input type="text" name="titre">
 		<h3>Auteur de l'article:</h3><input type="text" name="auteur">
-		<h3>Description de l'article:</h3> <textarea name="description"></textarea> 
+		<h3>Description de l'article:</h3> <textarea name="description"></textarea>
+		<h3>Rubrique de l'article:</h3><input type="text" name="rubriqueID"> 
 		<h3>prix de l'article:</h3><input type="text" name="prix"><br/>
+		<br/>
 		<input type="submit" name="submit">
 	
 	</form>
@@ -70,14 +73,14 @@ session_start();
 		$select=$db->prepare("SELECT*FROM articles");
 		$select->execute();
 
-		while ($s $select ->fetc(PDO::FETCH_OBJ)) {
-			 echo $s->articles;
+		while ($S=$select->fetch(PDO::FETCH_OBJ)) {
+			 echo $S->reference;
 
 ?>
 			
 
-			<a href="?action=modify&amp;reference=<?php echo $s->reference;?>">Modifier</a>
-			<a href="?action=delete&amp;reference=<?php echo $s->reference;?>">Supprimer</a>
+			<a href="?action=modify&amp;reference=<?php echo $S->reference;?>">Modifier</a>
+			<a href="?action=delete&amp;reference=<?php echo $S->reference;?>">Supprimer</a>
 
 
 <?php
@@ -86,10 +89,11 @@ session_start();
 	}elseif ($_GET['action']=='modify') {
 
 
-		$reference=$_GET['reference']
-		$select=$db->prepare("DELETE FROM articles WHERE reference=$reference");
+		$reference=$_GET['reference'];
+		$select=$db->prepare("SELECT * FROM articles WHERE reference=$reference");
 		$select->execute();
-		$data=$select->fetch(PDO::FETCH_OBJ)
+
+		$data=$select->fetch(PDO::FETCH_OBJ);
 
 ?>
 
@@ -99,6 +103,8 @@ session_start();
 		<h3>Titre de l'article:</h3><input value="<?php echo $data->titre?>"type="text" name="titre">
 		<h3>Auteur de l'article:</h3><input value="<?php echo $data->auteur?>"type="text" name="auteur">
 		<h3>Description de l'article:</h3> <textarea name="description"><?php echo $data->description?></textarea> 
+		<h3>Rubrique de l'article:</h3><input value="<?php echo $data->rubriqueID?>" type="text" name="rubriqueID"><br/>
+
 		<h3>prix de l'article:</h3><input value="<?php echo $data->prix?>" type="text" name="prix"><br/>
 		<input type="submit" name="submit" value="Modifier">
 	
@@ -112,9 +118,10 @@ session_start();
 			$titre=$_POST['titre'];
 			$auteur=$_POST['auteur'];
 			$description=$_POST['description'];
+			$rubriqueID=$_POST['rubriqueID'];
 			$prix=$_POST['prix'];
 
-			$update=$db->prepare("UPDATE articles SET reference='$refereence',titre='$titre',auteur='$auteur',description='$description',prix='$prix'");
+			$update=$db->prepare("UPDATE articles SET titre='$titre',auteur='$auteur',description='$description',rubriqueID='rubriqueID',prix='$prix' WHERE reference='$reference'");
 			$update->execute();
 			header('Location:admin.php?action-modifyanddelete');
 
@@ -128,7 +135,7 @@ session_start();
 	}else{
 		die('il y a une erreur');
 	}
-}else{
+}else{ 
 
 }	
 }else{

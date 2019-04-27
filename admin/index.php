@@ -10,6 +10,8 @@ if (isset($_POST['submit'])) {
 if($username&&$password){
 	if ($username==$user&&$password_definit) {
 		$_SESSION['username']=$username;
+		$_SESSION['$password_definit']=$password_definit;
+
 		header('Location:admin.php');
 	
 	}else{
