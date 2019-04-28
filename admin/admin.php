@@ -42,19 +42,65 @@ session_start();
 			$description=$_POST['description'];
 			$rubriqueID=$_POST['rubriqueID'];
 			$prix=$_POST['prix'];
-			$photo=$_POST['photo'];
-		if ($reference&&$titre&&$auteur&&$description&&$prix) {
-		    $insert=$db->prepare("INSERT INTO articles VALUES('$reference','$titre','$auteur','$description','$rubriqueID','$prix','$photo')");
+
+			$img=$_FILES['img']['name'];
+			$img_tmp=$_FILES['img']['tmp_name'];
+
+			if(!empty($img_tmp)) {
+				$image=explode('.',$img);
+
+				$image_ext=end($image);
+
+				if (in_array(strtolower($image_ext),array('png','jpg','jpeg'))===false) {
+					echo "veuillez entrez une image pour extension:png,jpg ou jpeg";
+
+				}else{
+
+					$image_size=getimagesize($img_tmp);
+					if ($image_size['mime']=='image/jpeg') {
+						$image_src=imagecreatefromjpeg($img_tmp);
+
+					}elseif($image_size['mime']=='image/png') {
+						$image_src=imagecreatefromjpeg($img_tmp);
+				}else{
+
+					$image_src=false;
+					echo "veuillez entrez une image valide";
+				}
+				if ($image_src!==false) {
+
+					$image_widh=200;
+					if ($image_size[0]==$image_widh) {
+						$image_finale=$image_src;
+					}else{
+
+						$new_widh[0]=$image_widh;
+
+						$new_height[1]=200;
+
+						$image_final=imagecreatetruecolor($new_widh[0],$new_height[1]);
+
+						imagecopyresampled($image_finale,$image_src,0,0,0,0,$new_widh[0],$new_height[1],$image_size[0],$image_size[1]);
+					}
+
+					imagejpeg($image_finale,'images/'.$reference.'.jpg')
+				
+				
+				
+			
+		if ($reference&&$titre&&$auteur&&$description&&$rubriqueID&&$prix) {
+		    $insert=$db->prepare("INSERT INTO articles VALUES('$reference','$titre','$auteur','$description','$rubriqueID','$prix')");
 			$insert->execute();
 				
 			
 			}else{
 				echo "remplissez tous les champs";
 			}
-		}
+	}
+
 ?>
 
-	<form action="" method="post">
+	<form action="" method="post" enctype="multipart/form-data">
 
 		<h3>Reference de l'article:</h3><input type="text" name="reference">
 		<h3>Titre de l'article:</h3><input type="text" name="titre">
@@ -62,7 +108,7 @@ session_start();
 		<h3>Description de l'article:</h3> <textarea name="description"></textarea>
 		<h3>Rubrique de l'article:</h3><input type="text" name="rubriqueID"> 
 		<h3>prix de l'article:</h3><input type="text" name="prix">
-		<h3>photo de l'article:</h3><input type="text" name="photo"><br/>
+		<h3>photo de l'article:</h3><input type="file" name="img"/><br/>
 		<br/>
 		<input type="submit" name="submit">
 	
@@ -92,7 +138,7 @@ session_start();
 
 		$reference=$_GET['reference'];
 
-		$select=$db->prepare("SELECT * FROM articles");
+		$select=$db->prepare("SELECT * FROM articles WHERE reference=$reference");
 		$select->execute();
 
 		$data=$select->fetch(PDO::FETCH_OBJ);
@@ -108,7 +154,7 @@ session_start();
 		<h3>Rubrique de l'article:</h3><input value="<?php echo $data->rubriqueID;?>" type="text" name="rubriqueID"><br/>
 
 		<h3>prix de l'article:</h3><input value="<?php echo $data->prix;?>" type="text" name="prix">
-		<h3>Photo de l'article:</h3><input value="<?php echo $data->photo;?>" type="text" name="photo"><br>
+		
 		<input type="submit" name="submit" value="Modifier">
 	
 	
@@ -123,7 +169,7 @@ session_start();
 			$description=$_POST['description'];
 			$rubriqueID=$_POST['rubriqueID'];
 			$prix=$_POST['prix'];
-			$photo=$_POST['photo'];
+			
 
 			$update=$db->prepare("UPDATE articles SET titre='$titre',auteur='$auteur',description='$description',rubriqueID='$rubriqueID',prix='$prix',photo='$photo' WHERE reference='$reference'");
 			$update->execute();
