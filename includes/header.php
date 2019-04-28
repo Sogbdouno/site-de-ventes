@@ -32,9 +32,10 @@
 	<ul class="menu">
 		<li><a href="index.php">Accueil</a></li>
 		<li><a href="catalogue.php">Catalogue</a></li>
-		<li><a href="panier.php">Panier</a></li>
+		<li><a href="Boutique.php">Boutique</a></li>
 		<li><a href="inscription.php">Inscription</a></li>
 		<li><a href="admin/index.php">connextion</a></li>
+		<li><a href="panier.php">Panier</a></li>
 		<li><a href="connexion.php">Conditions generales de vente</a></li>
 	</ul>
 </header>
